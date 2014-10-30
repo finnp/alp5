@@ -3,6 +3,8 @@ package alpv_ws1415.ub1.webradio.webradio;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Main {
 	private static final String	USAGE	= String.format("usage: java -jar UB%%X_%%NAMEN [-options] server tcp|udp|mc PORT%n" +
@@ -36,8 +38,8 @@ public class Main {
 			}
 
 			if(args[i].equals("server")) {
-				if(args[i+1].equals("tcp")) {
-						int port = Integer.parseInt(args[i+2]);
+				if(args[++i].equals("tcp")) {
+						int port = Integer.parseInt(args[++i]);
 						ServerSocket server = new ServerSocket(port);
 						while(true) {
 							Socket socket = server.accept();
@@ -52,7 +54,19 @@ public class Main {
 
 			}
 			else if(args[i].equals("client")) {
-				// TODO
+				if(args[++i].equals("tcp")) {
+					String hostname = args[++i];
+					Integer port = Integer.parseInt(args[++i]);
+					Socket socket = new Socket(hostname, port);
+					
+					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+					String message;
+					while((message = in.readLine()) != null) {
+						System.out.println(message);
+					}
+					socket.close();
+					
+				}
 			}
 			else
 				throw new IllegalArgumentException();
