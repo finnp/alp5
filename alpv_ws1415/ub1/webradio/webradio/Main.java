@@ -37,6 +37,7 @@ public class Main {
 			if(args[i].equals("server")) {
 				if(args[++i].equals("tcp")) {
 						int port = Integer.parseInt(args[++i]);
+						// TextServer server = new TextServer(port); // aufgabe a
 						RadioServer server = new RadioServer(port);
 						server.run();
 				} else {
@@ -50,6 +51,7 @@ public class Main {
 					String hostname = args[++i];
 					Integer port = Integer.parseInt(args[++i]);
 
+					// TextClient client = new TextClient(hostname, port); //aufgabe a
 					RadioClient client = new RadioClient(hostname, port);
 					client.connect();
 				}
