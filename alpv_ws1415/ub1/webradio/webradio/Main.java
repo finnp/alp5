@@ -4,6 +4,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.*;
 import alpv_ws1415.ub1.webradio.audioplayer.AudioPlayer;
+import alpv_ws1415.ub1.webradio.*;
+
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -11,6 +13,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.nio.*;
 
 public class Main {
 	private static final String	USAGE	= String.format("usage: java -jar UB%%X_%%NAMEN [-options] server tcp|udp|mc PORT%n" +
@@ -50,11 +53,12 @@ public class Main {
 						while(true) {
 							Socket socket = server.accept();
 							
-							// FileoutputStream music = new FileoutputStream('./sound.wav');
-							
-							// AudioPlayer player = new AudioPlayer();
 							AudioInputStream audio = AudioSystem.getAudioInputStream(new File("./sound.wav"));
 							OutputStream out = socket.getOutputStream();
+
+							AudioFormat format = audio.getFormat();
+							out.write(FormatHelper.serialize(format));
+
 							byte[] buffer = new byte[1024];
 							int c;
 							while((c = audio.read(buffer, 0, buffer.length)) != -1) {
@@ -80,13 +84,34 @@ public class Main {
 					Integer port = Integer.parseInt(args[++i]);
 					Socket socket = new Socket(hostname, port);
 				
+					InputStream input = socket.getInputStream();
 					
-					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-					String message;
-					while((message = in.readLine()) != null) {
-						System.out.println(message);
-					}
+					BufferedInputStream bis = new BufferedInputStream(input);
+					
+					byte[] formatBytes = new byte[FormatHelper.byteSize];
+					
+					bis.read(formatBytes, 0, FormatHelper.byteSize);
+					AudioFormat format = FormatHelper.parse(formatBytes);
+					
+				 System.out.println(Integer.toString(format.getSampleSizeInBits()));
+					
+					System.out.println("parsed?");
+		
+					out.close();
+					bis.close();
 					socket.close();
+					
+					// 
+					// while ((nRead = input.read(data, 0, FormatHelper.byteSize)) != -1) {
+  				// 	buffer.write(data, 0, nRead);
+					// }
+					
+					
+					// String message;
+					// while((message = in.readLine()) != null) {
+					// 	System.out.println(message);
+					// }
+					// socket.close();
 					
 				}
 			}
