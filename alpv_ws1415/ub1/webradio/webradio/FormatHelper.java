@@ -32,8 +32,8 @@ public class FormatHelper {
     float sampleRate = buffer.getFloat(0 * 4);
     int sampleSize = buffer.getInt(1 * 4);
     int channels = buffer.getInt(2 * 4);
-    boolean signed = buffer.getInt(3 * 4) == 1;
-    boolean bigEndian = buffer.getInt(4 * 4) == 1;
+    boolean signed = buffer.getInt(3 * 4) == 0;
+    boolean bigEndian = buffer.getInt(4 * 4) == 0;
     
     return new AudioFormat(sampleRate, sampleSize, channels, signed, bigEndian);
   }

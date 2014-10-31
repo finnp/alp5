@@ -28,7 +28,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		try {
+		// try {
 			boolean useGUI = false;
 			int i = -1;
 
@@ -57,6 +57,7 @@ public class Main {
 							OutputStream out = socket.getOutputStream();
 
 							AudioFormat format = audio.getFormat();
+							System.out.println(format.toString());
 							out.write(FormatHelper.serialize(format));
 
 							byte[] buffer = new byte[1024];
@@ -92,12 +93,20 @@ public class Main {
 					
 					bis.read(formatBytes, 0, FormatHelper.byteSize);
 					AudioFormat format = FormatHelper.parse(formatBytes);
+					System.out.println(format.toString());
+					AudioPlayer player = new AudioPlayer(format);
 					
-				 System.out.println(Integer.toString(format.getSampleSizeInBits()));
+					player.start();
 					
-					System.out.println("parsed?");
+					byte buffer[] = new byte[1024];
+					int len;
+					while((len = bis.read(buffer, 0, 1024)) != -1) {
+						player.writeBytes(buffer, len);
+					}
+					
+					System.out.println("done");
 		
-					out.close();
+					// out.close();
 					bis.close();
 					socket.close();
 					
@@ -117,15 +126,15 @@ public class Main {
 			}
 			else
 				throw new IllegalArgumentException();
-		}
-		catch(ArrayIndexOutOfBoundsException e) {
-			System.err.println(USAGE);
-		}
-		catch(NumberFormatException e) {
-			System.err.println(USAGE);
-		}
-		catch(IllegalArgumentException e) {
-			System.err.println(USAGE);
-		}
+		// }
+		// catch(PokeMonException e) {
+		// 	System.err.println(USAGE);
+		// }
+		// catch(NumberFormatException e) {
+		// 	System.err.println(USAGE);
+		// }
+		// catch(IllegalArgumentException e) {
+		// 	System.err.println(USAGE);
+		// }
 	}
 }

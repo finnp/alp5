@@ -99,7 +99,7 @@ public class AudioPlayer implements Runnable {
 	 * 
 	 * @param data A array of bytes to write.
 	 */
-	public void writeBytes(byte[] data) {
-		line.write(data, 0, data.length);
+	public void writeBytes(byte[] data, int length) {
+		line.write(data, 0, length);
 	}
 }
