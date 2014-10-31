@@ -2,9 +2,15 @@ package alpv_ws1415.ub1.webradio.webradio;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
+import alpv_ws1415.ub1.webradio.audioplayer.AudioPlayer;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class Main {
 	private static final String	USAGE	= String.format("usage: java -jar UB%%X_%%NAMEN [-options] server tcp|udp|mc PORT%n" +
@@ -43,9 +49,24 @@ public class Main {
 						ServerSocket server = new ServerSocket(port);
 						while(true) {
 							Socket socket = server.accept();
-							PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-							out.print("Hello, world!");
+							
+							// FileoutputStream music = new FileoutputStream('./sound.wav');
+							
+							// AudioPlayer player = new AudioPlayer();
+							AudioInputStream audio = AudioSystem.getAudioInputStream(new File("./sound.wav"));
+							OutputStream out = socket.getOutputStream();
+							byte[] buffer = new byte[1024];
+							int c;
+							while((c = audio.read(buffer, 0, buffer.length)) != -1) {
+								out.write(buffer, 0, c);
+							}
+							 
+							audio.close();
 							out.close();
+							
+							// 
+							// PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+							// out.print("Hello, world!");
 						}
 				} else {
 					// TODO
@@ -58,6 +79,7 @@ public class Main {
 					String hostname = args[++i];
 					Integer port = Integer.parseInt(args[++i]);
 					Socket socket = new Socket(hostname, port);
+				
 					
 					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					String message;
